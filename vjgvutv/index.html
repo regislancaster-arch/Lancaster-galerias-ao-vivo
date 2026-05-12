@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta name="robots" content="noindex, nofollow">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vjgvutv</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Manrope:wght@300;400;600;800&family=Material+Symbols+Outlined" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: { extend: { colors: { primary: "#D46A1F", background: "#F3F6F1", surface: "#E7EEE6", warm: "#0a0a0a", muted: "#6b7280" }, fontFamily: { serif: ['"Playfair Display"', 'serif'], sans: ['"Manrope"', 'sans-serif'], } } } }
+</script>
+<style>
+body { background-color: #F3F6F1; color: #0a0a0a; -webkit-tap-highlight-color: transparent; }
+.hero-bg { transition: background-image 0.6s ease; }
+.tour-step { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<!-- HERO + CONTATO -->
+<header id="heroSection" class="relative w-full h-[60vh] md:h-[70vh] overflow-hidden hero-bg bg-cover bg-center bg-gray-300">
+  <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+  <div class="relative z-10 h-full flex flex-col justify-between p-6 md:p-10">
+    <div class="flex justify-between items-start">
+      <div class="flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/30">
+        <img src="bolt-thin.png" class="w-5 h-auto" onerror="this.style.display='none'">
+        <span class="text-white text-xs font-bold tracking-widest">AO VIVO</span>
+      </div>
+      <div class="flex gap-3">
+        <a href="https://wa.me/5538999320748" target="_blank" class="bg-white/20 backdrop-blur-md p-2.5 rounded-full border border-white/30 hover:bg-primary transition text-white"><span class="material-symbols-outlined">chat</span></a>
+        <a href="https://instagram.com/lancaster_a.i_studio" target="_blank" class="bg-white/20 backdrop-blur-md p-2.5 rounded-full border border-white/30 hover:bg-primary transition text-white"><span class="material-symbols-outlined">photo_camera</span></a>
+      </div>
+    </div>
+    <div class="text-white drop-shadow-lg">
+      <h1 class="font-serif italic text-5xl md:text-7xl font-bold mb-2">vjgvutv</h1>
+      <p class="text-lg md:text-xl opacity-90">por Lancaster · 2026</p>
+    </div>
+  </div>
+</header>
+
+<!-- NAVEGAÇÃO -->
+<nav class="sticky top-0 z-40 bg-background/90 backdrop-blur-md border-b border-black/5 px-4 py-3 flex justify-center gap-4">
+  <button onclick="showFeed()" id="navFeed" class="px-6 py-2 rounded-full text-[15px] font-bold shadow-lg transition-all bg-primary text-white">Feed Ao Vivo</button>
+  <button onclick="showGallery()" id="navGal" class="px-6 py-2 rounded-full text-[15px] font-bold hover:bg-white/90 transition-all bg-white/70 text-gray-900 border border-black/10">Galeria Completa</button>
+</nav>
+
+<!-- FEED (Últimas 30) -->
+<main id="mainFeed" class="flex-1 px-4 max-w-4xl mx-auto space-y-6">
+  <div id="feedGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+  <div class="text-center py-8 text-gray-500 text-sm italic">Fim das fotos recentes</div>
+</main>
+
+<!-- GRID COMPLETO -->
+<section id="gallerySection" class="hidden flex-1 px-4 max-w-5xl mx-auto">
+  <div id="thumbGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+</section>
+
+<div class='max-w-4xl mx-auto px-6 mb-12 text-center'><h3 class='font-serif italic text-lg text-gray-600 mb-4'>Quem fez este evento acontecer</h3><div class='flex flex-wrap justify-center gap-6'><a href='https://instagram.com/buffet' target='_blank' class='group flex items-center gap-2 bg-surface border border-white/20 px-4 py-2 rounded-full hover:border-primary transition'><span class='text-sm font-semibold text-gray-800'>Buffet Sabor & Arte</span><span class='text-xs text-muted'>· Gastronomia</span></a><a href='https://wa.me/5500000000000' target='_blank' class='group flex items-center gap-2 bg-surface border border-white/20 px-4 py-2 rounded-full hover:border-primary transition'><span class='text-sm font-semibold text-gray-800'>Iluminação Pro</span><span class='text-xs text-muted'>· Técnica</span></a></div></div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" class="fixed inset-0 z-50 bg-black/95 hidden flex flex-col">
+  <div class="flex justify-between items-center p-4">
+    <button onclick="closeLightbox()" class="p-2 rounded-full bg-white/10 text-white hover:bg-white/20"><span class="material-symbols-outlined">close</span></button>
+    <span class="text-sm font-serif italic text-gray-300" id="lbCounter">1 / 10</span>
+  </div>
+  <div class="w-full flex-1 flex items-center justify-center overflow-hidden">
+    <img id="lbImage" src="" class="max-w-full max-h-full object-contain transition-transform duration-200" onclick="toggleZoom()">
+  </div>
+  <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex gap-6">
+    <button onclick="toggleLike()" class="flex flex-col items-center text-white hover:text-yellow-400 transition"><span class="material-symbols-outlined text-2xl bg-black/40 p-2 rounded-full">favorite</span><span class="text-xs mt-1">Curtir</span></button>
+    <button onclick="shareViaWhatsApp()" class="flex flex-col items-center text-white hover:text-green-400 transition"><span class="material-symbols-outlined text-2xl bg-black/40 p-2 rounded-full">share</span><span class="text-xs mt-1">WhatsApp</span></button>
+    <button onclick="ocultarFotoAtual()" class="flex flex-col items-center text-white hover:text-red-400 transition"><span class="material-symbols-outlined text-2xl bg-black/40 p-2 rounded-full">hide_image</span><span class="text-xs mt-1">Ocultar</span></button>
+  </div>
+</div>
+
+<!-- TOUR GUIADO -->
+<div id="welcomeTour" class="fixed inset-0 z-[100] hidden pointer-events-none">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm pointer-events-auto" onclick="skipTour()"></div>
+  <div id="tourStep1" class="tour-step pointer-events-auto absolute bg-white rounded-2xl shadow-2xl p-5 max-w-xs border border-primary/20 z-[101]">
+    <h3 class="font-serif italic font-bold text-lg mb-1">Bem-vindo! 📸</h3>
+    <p class="text-sm text-gray-600 mb-3">As fotos aparecem aqui em tempo real. As mais curtidas sobem automaticamente!</p>
+    <button onclick="nextTourStep(2)" class="w-full bg-primary text-white py-2 rounded-lg font-bold text-sm hover:opacity-90">Próximo →</button>
+  </div>
+  <div id="tourStep2" class="tour-step pointer-events-auto absolute bg-white rounded-2xl shadow-2xl p-5 max-w-xs border border-primary/20 z-[101] hidden">
+    <h3 class="font-serif italic font-bold text-lg mb-1">Curta e Compartilhe ❤️</h3>
+    <p class="text-sm text-gray-600 mb-3">Toque no coração para destacar. Use o botão de compartilhar para enviar no WhatsApp.</p>
+    <button onclick="finishTour()" class="w-full bg-primary text-white py-2 rounded-lg font-bold text-sm hover:opacity-90">Entendi! 🎯</button>
+  </div>
+</div>
+
+<footer class="px-6 pb-8 text-center text-[13px] text-muted"> Fotos por Lancaster</footer>
+
+<script>
+let PHOTOS = ["IMG_0387.webp", "IMG_0387 (1).webp", "IMG_0385.webp", "IMG_0385 (2).webp", "IMG_0385 (2) (1).webp", "IMG_0385 (1).webp", "IMG_0383.webp", "IMG_0383 (2).webp", "IMG_0383 (1).webp", "IMG_0383 (1) (1).webp", "IMG_0381.webp", "IMG_0381 (4).webp", "IMG_0381 (3).webp", "IMG_0381 (2).webp", "IMG_0381 (1).webp"];
+const EVENT_SLUG = "vjgvutv";
+const SUPABASE_URL = "https://iofnwlxoldbcjscrdcun.supabase.co";
+const SUPABASE_KEY = "sb_publishable_MgJ4Lhkabl2eAtBSJZBDGA_a2uTK4G2";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentIndex = 0; let likesCache = {}; let isZoomed = false;
+const DEVICE_ID = localStorage.getItem("bolt_uid") || Math.random().toString(36).slice(2); localStorage.setItem("bolt_uid", DEVICE_ID);
+
+function showFeed() {
+  document.getElementById("mainFeed").classList.remove("hidden");
+  document.getElementById("gallerySection").classList.add("hidden");
+  document.getElementById("navFeed").className = "px-6 py-2 rounded-full text-[15px] font-bold shadow-lg transition-all bg-primary text-white";
+  document.getElementById("navGal").className = "px-6 py-2 rounded-full text-[15px] font-bold hover:bg-white/90 transition-all bg-white/70 text-gray-900 border border-black/10";
+}
+function showGallery() {
+  document.getElementById("mainFeed").classList.add("hidden");
+  document.getElementById("gallerySection").classList.remove("hidden");
+  document.getElementById("navGal").className = "px-6 py-2 rounded-full text-[15px] font-bold shadow-lg transition-all bg-primary text-white";
+  document.getElementById("navFeed").className = "px-6 py-2 rounded-full text-[15px] font-bold hover:bg-white/90 transition-all bg-white/70 text-gray-900 border border-black/10";
+  renderGallery();
+}
+
+function renderFeed() {
+  const grid = document.getElementById("feedGrid");
+  if (!grid) return;
+  grid.innerHTML = PHOTOS.slice(0, 30).map((src, idx) => {
+    const lc = likesCache[src] || 0;
+    return `<div class="group relative aspect-[3/4] md:aspect-square w-full overflow-hidden rounded-xl bg-surface shadow-md cursor-pointer" onclick="openLightbox(${idx})">
+      <img src="${src}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
+      <div class="absolute top-3 right-3 bg-black/40 backdrop-blur-md rounded-full px-2 py-1 flex items-center gap-1 border border-white/10">
+        <span class="material-symbols-outlined text-[16px]" style="color:#F5B301; font-variation-settings:'FILL' 1;">favorite</span>
+        <span class="text-[13px] font-bold text-white">${lc}</span>
+      </div>
+      <button onclick="event.stopPropagation(); ocultarFoto('${src}')" class="absolute bottom-3 right-3 bg-red-500/80 hover:bg-red-600 text-white px-2 py-1 rounded-lg text-[11px] font-semibold shadow-md opacity-0 group-hover:opacity-100 transition flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">hide_image</span> Ocultar</button>
+    </div>`;
+  }).join('');
+}
+
+function renderGallery() {
+  const grid = document.getElementById("thumbGrid");
+  if (!grid) return;
+  grid.innerHTML = PHOTOS.map((src, idx) => `
+    <div onclick="openLightbox(${idx})" class="relative aspect-square cursor-pointer overflow-hidden rounded-lg border-2 border-transparent hover:border-primary transition">
+      <img src="${src}" class="w-full h-full object-cover">
+    </div>`).join('');
+}
+
+function openLightbox(idx) {
+  if (idx < 0 || idx >= PHOTOS.length) return;
+  currentIndex = idx;
+  const img = document.getElementById("lbImage");
+  img.style.opacity = 0;
+  img.src = PHOTOS[idx];
+  img.onload = () => img.style.opacity = 1;
+  document.getElementById("lightbox").classList.remove("hidden");
+  document.getElementById("lbCounter").innerText = `${idx + 1} / ${PHOTOS.length}`;
+  document.body.style.overflow = "hidden";
+  loadPhotoData(PHOTOS[idx]);
+}
+function closeLightbox() { document.getElementById("lightbox").classList.add("hidden"); document.body.style.overflow = ""; isZoomed = false; }
+function changeSlide(dir) { let newIdx = currentIndex + dir; if(newIdx < 0) newIdx = PHOTOS.length - 1; if(newIdx >= PHOTOS.length) newIdx = 0; openLightbox(newIdx); }
+function toggleZoom() {
+  const img = document.getElementById("lbImage");
+  if (!img) return;
+  isZoomed = !isZoomed;
+  img.style.transform = isZoomed ? "scale(1.5)" : "scale(1)";
+}
+
+async function loadPhotoData(src) {
+  const { count } = await sb.from("likes").select("*", { count: 'exact', head: true }).eq("evento_slug", EVENT_SLUG).eq("foto", src);
+}
+async function didILike(src) { const { data } = await sb.from("likes").select("id").eq("evento_slug", EVENT_SLUG).eq("foto", src).eq("device_id", DEVICE_ID); return data && data.length > 0; }
+async function toggleLike() {
+  const src = PHOTOS[currentIndex];
+  const liked = await didILike(src);
+  if (liked) { await sb.from("likes").delete().eq("evento_slug", EVENT_SLUG).eq("foto", src).eq("device_id", DEVICE_ID); }
+  else { await sb.from("likes").insert({ evento_slug: EVENT_SLUG, foto: src, device_id: DEVICE_ID }); }
+  await updateCounts();
+}
+function shareViaWhatsApp() { const url = window.location.origin + "/" + PHOTOS[currentIndex]; window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent("Olha essa foto: " + url), '_blank'); }
+
+let hiddenGlobal = new Set();
+async function carregarFotosOcultas() {
+  const { data } = await sb.from("fotos_ocultas").select("foto").eq("evento_slug", EVENT_SLUG);
+  hiddenGlobal = new Set((data || []).map(r => r.foto));
+}
+function fotosVisiveis() { return hiddenGlobal.size > 0 ? PHOTOS.filter(f => !hiddenGlobal.has(f)) : PHOTOS; }
+async function ocultarFoto(src) {
+  if (!confirm("Remover esta foto da página para todos? ")) return;
+  await sb.from("fotos_ocultas").insert({ evento_slug: EVENT_SLUG, foto: src });
+  hiddenGlobal.add(src);
+  renderFeed();
+}
+async function ocultarFotoAtual() { await ocultarFoto(PHOTOS[currentIndex]); closeLightbox(); }
+
+async function updateCounts() {
+  const { data } = await sb.from("likes").select("foto").eq("evento_slug", EVENT_SLUG);
+  likesCache = {};
+  if (data) data.forEach(r => likesCache[r.foto] = (likesCache[r.foto] || 0) + 1);
+  
+  // Hero dinâmico: troca capa para a mais curtida
+  const hero = document.getElementById("heroSection");
+  let topPhoto = PHOTOS[0];
+  let maxLikes = 0;
+  for(const f of PHOTOS) { if((likesCache[f]||0) > maxLikes) { maxLikes = likesCache[f]; topPhoto = f; } }
+  hero.style.backgroundImage = `url('${topPhoto}')`;
+
+  PHOTOS.sort((a, b) => (likesCache[b]||0) - (likesCache[a]||0));
+  renderFeed();
+  if(!document.getElementById("gallerySection").classList.contains("hidden")) renderGallery();
+}
+
+// TOUR
+let tourCompleted = localStorage.getItem('bolt_tour_v1');
+function initTour() {
+  if(tourCompleted === 'true') return;
+  document.getElementById('welcomeTour').classList.remove('hidden');
+  positionTour(1);
+}
+function positionTour(step) {
+  document.querySelectorAll('.tour-step').forEach(el => el.classList.add('hidden'));
+  const el = document.getElementById(`tourStep${step}`);
+  if(!el) return;
+  el.style.top = window.innerHeight > 700 ? '20%' : '15%';
+  el.style.left = window.innerWidth > 768 ? '60%' : '5%';
+  el.classList.remove('hidden');
+}
+function nextTourStep(s) { positionTour(s); }
+function skipTour() { localStorage.setItem('bolt_tour_v1', 'true'); document.getElementById('welcomeTour').classList.add('hidden'); }
+function finishTour() { skipTour(); }
+
+async function iniciarPagina() {
+  await carregarFotosOcultas();
+  renderFeed();
+  updateCounts();
+  initTour();
+}
+iniciarPagina();
+setInterval(updateCounts, 15000);
+</script>
+</body>
+</html>
